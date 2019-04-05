@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+  onboarding-ui:
+    container_name: onboarding-ui
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: onboarding-ui
+    ports:
+      - "8001:8080"  # host:container
+    volumes:
+      - ./local:/opt/app-root/src/horizon/openstack_dashboard/local
