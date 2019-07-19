@@ -1,15 +1,10 @@
 # The slug of the panel to be added to HORIZON_CONFIG. Required.
-PANEL = 'tasks'
+PANEL = 'volume_groups'
 # The slug of the dashboard the PANEL associated with. Required.
-PANEL_DASHBOARD = 'management'
+PANEL_DASHBOARD = 'admin'
 # The slug of the panel group the PANEL is associated with.
-PANEL_GROUP = 'default'
-
-DEFAULT_PANEL = 'tasks'
+PANEL_GROUP = 'volume'
 
 # Python panel class of the PANEL to be added.
-ADD_PANEL = 'adjutant_ui.content.tasks.panel.TaskList'
-
-ADD_INSTALLED_APPS = [
-    'adjutant_ui.content.tasks'
-]
+ADD_PANEL = ('openstack_dashboard.dashboards.admin.volume_groups.panel.'
+             'VolumeGroups')

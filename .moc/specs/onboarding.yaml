@@ -1,0 +1,141 @@
+# Note(knikolla): MEMCACHED
+---
+apiVersion: v1
+kind: ImageStream
+metadata:
+  labels:
+    app: memcached
+  name: memcached
+spec:
+  lookupPolicy:
+    local: false
+  tags:
+  - from:
+      kind: DockerImage
+      name: memcached:1.5.14
+    name: 1.5.14
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: horizon-memcached
+  annotations:
+    kubernetes.io/tls-acme: "true"
+  labels:
+    app: horizon-memcached
+spec:
+  ports:
+  - port: 11211
+    targetPort: 11211
+  selector:
+    app: horizon-memcached
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: horizon-memcached
+  labels:
+    app: horizon-memcached
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: horizon-memcached
+  template:
+    metadata:
+      labels:
+        app: horizon-memcached
+    spec:
+      containers:
+      - name: horizon-memcached
+        image: memcached:1.5.14
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 11211
+
+# Note(knikolla): Horizon Onboarding
+---
+apiVersion: v1
+kind: ImageStream
+metadata:
+  labels:
+    app: horizon-onboarding
+  name: horizon-onboarding
+spec:
+  dockerImageRepository: "docker.io/massopencloud/horizon-onboarding"
+  tags:
+  - from:
+      kind: DockerImage
+      name: massopencloud/horizon-onboarding:r1
+    name: r1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: horizon-onboarding
+  annotations:
+    kubernetes.io/tls-acme: "true"
+  labels:
+    app: horizon-onboarding
+spec:
+  ports:
+  - name: 443-https
+    port: 443
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: horizon-onboarding
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: horizon-onboarding
+  labels:
+    app: horizon-onboarding
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: horizon-onboarding
+  template:
+    metadata:
+      labels:
+        app: horizon-onboarding
+    spec:
+      containers:
+      - name: onboarding
+        image: docker.io/massopencloud/horizon-onboarding:r1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        env:
+        - name: HORIZON_URL
+          value: https://onboarding.massopen.cloud
+        - name: OPENSTACK_KEYSTONE_URL
+          value: https://kaizenold.massopen.cloud:5000/v3
+        - name: OPENSTACK_REGISTRATION_URL
+          value: https://adjutant.massopen.cloud/v1
+        - name: OIDC_METADATA_URL
+          value: https://sso.massopen.cloud/auth/realms/moc/.well-known/openid-configuration
+        - name: OIDC_CLIENT_ID
+          value: onboarding
+        - name: OIDC_CLIENT_SECRET
+          value: 34d83c92-5d04-4e2c-9744-7334247f34bc
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  annotations:
+    kubernetes.io/tls-acme: "true"
+  labels:
+    app: onboarding
+  name: onboarding
+spec:
+  host: onboarding.massopen.cloud
+  port:
+    targetPort: 443-https
+  tls:
+    termination: edge
+  to:
+    kind: Service
+    name: horizon-onboarding

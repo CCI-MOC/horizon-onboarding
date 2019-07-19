@@ -1,0 +1,44 @@
+---
+- hosts: sso
+  become: yes
+
+  tasks:
+  - name: Install packages
+    package: name="{{ item }}" state=present
+    with_items:
+    - docker
+    - docker-compose
+    - httpd
+    - python-docker-py
+
+  - name: Allow Apache to connect to Adjutant
+    seboolean:
+      name: httpd_can_network_relay
+      state: yes
+      persistent: yes
+
+  - name: Configure Apache Proxy
+    template:
+      src: files/onboarding.conf.j2
+      dest: /etc/httpd/conf.d/onboarding.conf
+    notify:
+    - httpd_restart
+
+  - name: Start services
+    service: name="{{ item }}" state=started
+    with_items:
+    - docker
+    - httpd
+
+  - name: Ensures /app/onboarding dir exists
+    file: path=/app/onboarding state=directory
+
+  - name: Copy docker-compose.yml to /root/sso
+    template:
+      src: files/docker-compose.yml.j2
+      dest: /app/onboarding/docker-compose.yml
+
+  handlers:
+  - name: httpd_restart
+    service: name=httpd state=restarted
+    become: yes

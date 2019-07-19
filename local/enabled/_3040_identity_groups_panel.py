@@ -1,11 +1,11 @@
 # The slug of the panel to be added to HORIZON_CONFIG. Required.
-PANEL = 'quota'
+PANEL = 'groups'
 # The slug of the dashboard the PANEL associated with. Required.
-PANEL_DASHBOARD = 'management'
-
+PANEL_DASHBOARD = 'identity'
+# The slug of the panel group the PANEL is associated with.
 PANEL_GROUP = 'default'
 
 # Python panel class of the PANEL to be added.
-ADD_PANEL = 'adjutant_ui.content.quota.panel.QuotaPanel'
+ADD_PANEL = 'openstack_dashboard.dashboards.identity.groups.panel.Groups'
 
 DISABLED = True
