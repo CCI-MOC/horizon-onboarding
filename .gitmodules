@@ -1,7 +1,3 @@
-[submodule "horizon"]
-	path = horizon
-	url = https://github.com/CCI-MOC/horizon
-	branch = moc/stable/stein
 [submodule "adjutant-ui"]
         path = adjutant-ui
         url = https://github.com/CCI-MOC/adjutant-ui
