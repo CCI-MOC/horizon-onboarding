@@ -1,4 +1,4 @@
-FROM fedora:30
+FROM fedora:31
 
 # Bug https://bugzilla.redhat.com/show_bug.cgi?id=1694411
 RUN echo "zchunk=False" >> /etc/dnf/dnf.conf && \
