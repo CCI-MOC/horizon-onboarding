@@ -1,12 +1,22 @@
 FROM fedora:31
 
-# Bug https://bugzilla.redhat.com/show_bug.cgi?id=1694411
-RUN echo "zchunk=False" >> /etc/dnf/dnf.conf && \
-    dnf install -y git gcc httpd python3 python3-pip python3-devel \
-        python3-mod_wsgi mod_auth_openidc libffi-devel openssl-devel \
-	findutils patch tar
+RUN dnf install -y \
+	findutils \
+	gcc \
+	git \
+	libffi-devel \
+	mod_auth_openidc \
+	openssl-devel \
+	patch \
+	python3 \
+	python3-devel \
+	python3-mod_wsgi \
+	python3-pip \
+	tar
 
-RUN pip3 install -U pip setuptools
+RUN pip3 install -U \
+	pip \
+	setuptools
 
 ########################################################################
 ## Horizon
