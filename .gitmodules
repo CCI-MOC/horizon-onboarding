@@ -1,4 +1,0 @@
-[submodule "adjutant-ui"]
-        path = adjutant-ui
-        url = https://github.com/CCI-MOC/adjutant-ui
-        branch = moc
