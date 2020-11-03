@@ -90,4 +90,5 @@ RUN chmod -R g+rwX /opt && \
 
 USER 1001:0
 
-ENTRYPOINT ["/opt/run_horizon.sh"]
+ENTRYPOINT ["/opt/docker-entrypoint.sh"]
+CMD ["/usr/sbin/httpd", "-D", "FOREGROUND"]

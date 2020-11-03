@@ -9,4 +9,5 @@ sed -e "
     " /opt/horizon.conf > /etc/httpd/conf.d/horizon.conf
 
 rm -rf /run/httpd/* /tmp/httpd*
-/usr/sbin/httpd -D FOREGROUND
+
+exec "$@"
