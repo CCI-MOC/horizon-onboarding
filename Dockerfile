@@ -8,9 +8,18 @@ RUN echo "zchunk=False" >> /etc/dnf/dnf.conf && \
 RUN pip3 install -U pip setuptools
 
 # Install Horizon
-ENV PBR_VERSION="16.0.0"
-RUN cd /opt && \
-    git clone --depth=1 https://github.com/openstack/horizon
+ARG HORIZON_VERSION=6199c5fd
+ARG HORIZON_REPO=https://github.com/openstack/horizon
+
+WORKDIR /opt
+RUN git clone ${HORIZON_REPO}
+
+WORKDIR /opt/horizon
+RUN git checkout ${HORIZON_VERSION}
+
+# Patch for https://github.com/CCI-MOC/ops-issues/issues/4
+COPY 0001-handle-missing-access_rules.patch .
+RUN git apply 0001-handle-missing-access_rules.patch
 
 COPY tools/horizon-customizations/logo.svg /opt/horizon/openstack_dashboard/static/dashboard/img/logo.svg
 COPY tools/horizon-customizations/logo.svg /opt/horizon/openstack_dashboard/static/dashboard/img/logo-splash.svg
