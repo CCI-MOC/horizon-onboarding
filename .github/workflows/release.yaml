@@ -2,12 +2,12 @@
 #
 # Uses the action:
 # https://github.com/marketplace/actions/build-and-push-docker-images
-name: ci
+name: Release
 
 on:
   push:
     tags:
-      - '*.*.*'
+      - 'v*.*.*'
 
 jobs:
   main:
@@ -26,7 +26,7 @@ jobs:
         id: vars
         run: |
           echo ::set-output name=image::${GITHUB_REPOSITORY#CCI-MOC/}
-          echo ::set-output name=tag::${GITHUB_REF#refs/tags/}
+          echo ::set-output name=tag::${GITHUB_REF#refs/tags/v}
 
       - name: Build and push
         id: docker_build
