@@ -86,7 +86,8 @@ RUN chmod -R g+rwX /opt && \
     chmod -R g+rwX /etc/httpd/logs && \
     chgrp -R 0 /etc/httpd/logs && \
     chmod -R g+rwX /etc/httpd/conf.d && \
-    chgrp -R 0 /etc/httpd/conf.d
+    chgrp -R 0 /etc/httpd/conf.d && \
+    chmod g-rwx /opt/horizon/openstack_dashboard/local/.secret_key_store
 
 USER 1001:0
 
