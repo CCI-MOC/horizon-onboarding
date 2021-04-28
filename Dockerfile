@@ -1,4 +1,4 @@
-FROM fedora:31
+FROM fedora:33
 
 RUN dnf install -y \
 	findutils \
@@ -14,7 +14,7 @@ RUN dnf install -y \
 	python3-pip \
 	tar
 
-RUN pip3 install -U \
+RUN pip install -U \
 	pip \
 	setuptools
 
@@ -22,34 +22,31 @@ RUN pip3 install -U \
 ## Horizon
 ##
 
-ARG HORIZON_VERSION=6199c5fd
+ARG HORIZON_VERSION=5eafe66
 ARG HORIZON_REPO=https://github.com/openstack/horizon
 
 RUN mkdir -p /opt/horizon
 WORKDIR /opt/horizon
 
-RUN echo ${HORIZON_VERSION} > .version && \
-	curl -sfL -o horizon.tar.gz ${HORIZON_REPO}/archive/${HORIZON_VERSION}.tar.gz && \
+RUN curl -sfL -o horizon.tar.gz ${HORIZON_REPO}/archive/${HORIZON_VERSION}.tar.gz && \
 	tar -x --strip-components=1 -f horizon.tar.gz && \
 	rm -f horizon.tar.gz
-
-# Patch for https://github.com/CCI-MOC/ops-issues/issues/4
-COPY 0001-handle-missing-access_rules.patch .
-RUN patch -p1 < 0001-handle-missing-access_rules.patch
 
 COPY tools/horizon-customizations/logo.svg /opt/horizon/openstack_dashboard/static/dashboard/img/logo.svg
 COPY tools/horizon-customizations/logo.svg /opt/horizon/openstack_dashboard/static/dashboard/img/logo-splash.svg
 COPY tools/horizon-customizations/_splash.html /opt/horizon/openstack_dashboard/templates/auth/_splash.html
 
-RUN PBR_VERSION=${HORIZON_VERSION} pip install -e . \
-        -c https://opendev.org/openstack/requirements/raw/branch/master/upper-constraints.txt
+# The new pip dependency resolver will complain if horizon's version is
+# anything but the one in the contraints file.
+RUN PBR_VERSION=19.1.0 pip install -e . \
+        -c https://opendev.org/openstack/requirements/raw/branch/stable/wallaby/upper-constraints.txt
 
 ########################################################################
 ## Adjutant
 ##
 
 ARG ADJUTANT_UI_VERSION=a90963b3
-ARG ADJUTANT_UI_REPO=https://github.com/openstack/adjutant-ui
+ARG ADJUTANT_UI_REPO=https://github.com/CCI-MOC/adjutant-ui
 
 RUN mkdir -p /opt/adjutant-ui
 WORKDIR /opt/adjutant-ui
@@ -59,9 +56,9 @@ RUN echo ${ADJUTANT_UI_VERSION} > .version && \
 	tar -x --strip-components=1 -f adjutant-ui.tar.gz && \
 	rm -f adjutant-ui.tar.gz
 
-RUN PBR_VERSION=${ADJUTANT_UI_VERSION} pip3 install -e . \
+RUN PBR_VERSION=${ADJUTANT_UI_VERSION} pip install -e . \
         -r /opt/adjutant-ui/requirements.txt \
-        -c https://opendev.org/openstack/requirements/raw/branch/master/upper-constraints.txt
+        -c https://opendev.org/openstack/requirements/raw/branch/stable/wallaby/upper-constraints.txt
 
 RUN python3 /opt/adjutant-ui/manage.py collectstatic --noinput
 
