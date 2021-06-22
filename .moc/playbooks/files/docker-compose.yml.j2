@@ -13,7 +13,9 @@ services:
       OIDC_METADATA_URL: https://sso.massopen.cloud/auth/realms/moc/.well-known/openid-configuration
       OIDC_CLIENT_ID:
       OIDC_CLIENT_SECRET:
+    restart: unless-stopped
 
   horizon-memcached:
     container_name: horizon-memcached
-    image: memcached:1.5.14
+    image: memcached:1.6
+    restart: unless-stopped
