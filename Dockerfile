@@ -38,7 +38,7 @@ COPY tools/horizon-customizations/_splash.html /opt/horizon/openstack_dashboard/
 
 # The new pip dependency resolver will complain if horizon's version is
 # anything but the one in the contraints file.
-RUN PBR_VERSION=19.1.0 pip install -e . \
+RUN PBR_VERSION=19.2.0 pip install -e . \
         -c https://opendev.org/openstack/requirements/raw/branch/stable/wallaby/upper-constraints.txt
 
 ########################################################################
